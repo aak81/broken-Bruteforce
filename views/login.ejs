@@ -187,9 +187,9 @@
 
     <% if (blocked) { %>
         <script>
-            // عد تنازلي للوقت المتبقي
             let timeLeft = <%= remainingTime %>;
             const countdownElement = document.getElementById('countdown');
+            const alertDiv = document.querySelector('.alert');
             const loginForm = document.getElementById('loginForm');
             const inputs = loginForm.querySelectorAll('input');
             const submitButton = loginForm.querySelector('button');
@@ -200,14 +200,31 @@
                 
                 if (timeLeft <= 0) {
                     clearInterval(countdownInterval);
-                    // تمكين الحقول عند انتهاء المدة
-                    inputs.forEach(input => input.disabled = false);
+                    
+                    // 1. Remove the blocked state visually
+                    alertDiv.style.display = 'none';
+                    
+                    // 2. Enable all form elements
+                    inputs.forEach(input => {
+                        input.disabled = false;
+                        input.value = ''; // Clear previous inputs
+                    });
+                    
+                    // 3. Update the submit button
                     submitButton.disabled = false;
                     submitButton.textContent = 'تسجيل الدخول';
-                    // إعادة تحميل الصفحة تلقائياً بعد ثانية
-                    setTimeout(() => {
-                        window.location.reload();
-                    }, 1000);
+                    
+                    // 4. Optional: Update the attempts counter
+                    const attemptsInfo = document.querySelector('.attempts-info');
+                    if (attemptsInfo) {
+                        attemptsInfo.textContent = 'لديك 3 محاولات متاحة';
+                    }
+                    
+                    // 5. Reset any error states
+                    const errorDiv = document.querySelector('.alert-danger');
+                    if (errorDiv) {
+                        errorDiv.style.display = 'none';
+                    }
                 }
             }, 1000);
         </script>
